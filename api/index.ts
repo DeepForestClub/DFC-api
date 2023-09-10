@@ -12,6 +12,11 @@ const rateLimit = (handler: (req: VercelRequest, res: VercelResponse) => void, l
     const token = request.query.token || '';
     const secretToken = process.env.SECRET_TOKEN;
 
+    // Reject the request if no token is provided
+    if (!secretToken && !token) {
+      return response.status(401).json({ message: 'Access Denied' });
+    }
+
     // Allow requests without rate limit if the correct token is provided
     if (secretToken && token === secretToken) {
       return handler(request, response);
