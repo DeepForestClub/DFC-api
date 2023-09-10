@@ -6,6 +6,15 @@ const rateLimit = (handler: (req: VercelRequest, res: VercelResponse) => void, l
   return async (request: VercelRequest, response: VercelResponse) => {
     const ip = request.headers['x-forwarded-for'] || request.socket.remoteAddress;
 
+    // Check if a token is provided
+    const token = request.query.token || '';
+    const secretToken = process.env.SECRET_TOKEN;
+
+    // Allow requests without rate limit if the correct token is provided
+    if (secretToken && token === secretToken) {
+      return handler(request, response);
+    }
+
     if (!requests.has(ip)) {
       requests.set(ip, 1);
     } else {
