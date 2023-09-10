@@ -4,7 +4,9 @@ const rateLimit = (handler: (req: VercelRequest, res: VercelResponse) => void, l
   const requests = new Map<string, number>();
 
   return async (request: VercelRequest, response: VercelResponse) => {
-    const ip = request.headers['x-forwarded-for'] || request.socket.remoteAddress;
+    // Get IP address of client by checking for x-forwarded-for header, which may
+    // contain multiple IP addresses if there are intermediate proxies.
+    const ip = request.headers['x-forwarded-for']?.split(',')[0].trim() || request.socket.remoteAddress;
 
     // Check if a token is provided
     const token = request.query.token || '';
@@ -15,19 +17,19 @@ const rateLimit = (handler: (req: VercelRequest, res: VercelResponse) => void, l
       return handler(request, response);
     }
 
-    if (!requests.has(ip)) {
-      requests.set(ip, 1);
-    } else {
-      if (requests.get(ip)! >= limit) {
-        return response.status(429).json({ message: 'Too Many Requests' });
-      }
-      requests.set(ip, requests.get(ip)! + 1);
+    // Check if the client has exceeded the rate limit
+    const numRequests = requests.get(ip) || 0;
+    if (numRequests >= limit) {
+      return response.status(429).json({ message: 'Too Many Requests' });
     }
 
-    setTimeout(() => {
-      requests.delete(ip);
-    }, interval);
+    // Increment the count of requests made by the client
+    requests.set(ip, numRequests + 1);
 
+    // Reset the count after the specified interval
+    setTimeout(() => requests.delete(ip), interval);
+
+    // Call the original handler
     return handler(request, response);
   };
 };
@@ -40,6 +42,6 @@ const apiHandler = (request: VercelRequest, response: VercelResponse) => {
   });
 };
 
-const handlerWithRateLimit = rateLimit(apiHandler, 10, 60000);
+const handlerWithRateLimit = rateLimit(apiHandler, 10, 60000); // Allow up to 10 requests per minute
 
 export default handlerWithRateLimit;
