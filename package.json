@@ -2,7 +2,7 @@
   "name": "vercel-api",
   "version": "1.0.0",
   "description": "",
-  "main": "README.md",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/DeepForestClub/DFC-api/issues"
   },
-  "homepage": "https://github.com/DeepForestClub/DFC-api#README",
+  "homepage": "https://github.com/DeepForestClub/DFC-api",
   "dependencies": {
     "@vercel/node": "^2.9.10",
     "vercel": "^28.16.12"
