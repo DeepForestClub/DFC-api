@@ -1,0 +1,23 @@
+{
+  "name": "vercel-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "README.md",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeepForestClub/DFC-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DeepForestClub/DFC-api/issues"
+  },
+  "homepage": "https://github.com/DeepForestClub/DFC-api#README",
+  "dependencies": {
+    "@vercel/node": "^2.9.10",
+    "vercel": "^28.16.12"
+  }
+}
