@@ -3,18 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.html",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DeepForestClub/DFC-api.git"
   },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/DeepForestClub/DFC-api/issues"
-  },
+  "author": "DEEP-FOREST-CLUB",
+  "license": "MIT",
   "homepage": "https://github.com/DeepForestClub/DFC-api",
   "dependencies": {
     "@vercel/node": "^2.9.10",
