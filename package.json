@@ -14,9 +14,10 @@
   "license": "MIT",
   "homepage": "https://github.com/DeepForestClub/DFC-api",
   "dependencies": {
-    "@vercel/node": "^2.9.10",
-    "vercel": "^28.16.12",
-    "node-fetch": "^2.6.1",
-    "jsdom": "^17.0.0"
+    "@vercel/node": "^2.15.10",
+    "jsdom": "^17.0.0",
+    "node-fetch": "^2.7.0",
+    "vercel": "^28.16.12"
+    "node-fetch": "^2.6.2"
   }
 }
