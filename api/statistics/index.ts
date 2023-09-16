@@ -61,6 +61,49 @@ const rateLimit = (
   };
 };
 
+// 原创页面数量
+const getPageTags = async (): Promise<number> => {
+  try {
+    const response = await axios.get('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E5%8E%9F%E5%88%9B');
+    const $ = cheerio.load(response.data);
+    const originalNumber = $('.pages-list-item').length;
+    console.log(`originalNumber: ${originalNumber}`);
+    return originalNumber;
+  } catch (error) {
+    console.error(error);
+    return -1; // 返回一个错误标识值
+  }
+};
+
+const apiHandler = async (_: VercelRequest, response: VercelResponse) => {
+  const originalNumber = await getPageTags();
+  response.status(200).json({
+    OriginalNumber: originalNumber,
+  });
+};
+
+// 搬运页面数量
+const getPageTags = async (): Promise<number> => {
+  try {
+    const response = await axios.get('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E6%90%AC%E8%BF%90');
+    const $ = cheerio.load(response.data);
+    const reprintedNumber = $('.pages-list-item').length;
+    console.log(`reprintedNumber: ${reprintedNumber}`);
+    return reprintedNumber;
+  } catch (error) {
+    console.error(error);
+    return -1; // 返回一个错误标识值
+  }
+};
+
+const apiHandler = async (_: VercelRequest, response: VercelResponse) => {
+  const reprintedNumber = await getPageTags();
+  response.status(200).json({
+    ReprintedNumber: reprintedNumber,
+  });
+};
+
+// 全部文章数量
 const getPageTags = async (): Promise<number> => {
   try {
     const response = await axios.get('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E6%96%87%E7%AB%A0');
@@ -78,6 +121,27 @@ const apiHandler = async (_: VercelRequest, response: VercelResponse) => {
   const articlesNumber = await getPageTags();
   response.status(200).json({
     ArticleNumber: articlesNumber,
+  });
+};
+
+// 艺术作品数量
+const getPageTags = async (): Promise<number> => {
+  try {
+    const response = await axios.get('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E8%89%BA%E6%9C%AF%E4%BD%9C%E5%93%81');
+    const $ = cheerio.load(response.data);
+    const artNumber = $('.pages-list-item').length;
+    console.log(`ArtNumber: ${artNumber}`);
+    return artNumber;
+  } catch (error) {
+    console.error(error);
+    return -1; // 返回一个错误标识值
+  }
+};
+
+const apiHandler = async (_: VercelRequest, response: VercelResponse) => {
+  const artNumber = await getPageTags();
+  response.status(200).json({
+    ArtNumber: artNumber,
   });
 };
 
