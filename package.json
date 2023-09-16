@@ -1,5 +1,5 @@
 {
-  "name": "DFC-api",
+  "name": "dfc-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.html",
@@ -18,6 +18,5 @@
     "jsdom": "^17.0.0",
     "node-fetch": "^2.7.0",
     "vercel": "^28.16.12"
-    "node-fetch": "^2.6.2"
   }
 }
