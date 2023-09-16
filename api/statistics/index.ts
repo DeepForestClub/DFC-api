@@ -61,90 +61,46 @@ const rateLimit = (
   };
 };
 
-// 原创页面数量
-const getPageTags = async (): Promise<number> => {
+const getPageTags = async (url: string): Promise<number> => {
   try {
-    const response = await axios.get('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E5%8E%9F%E5%88%9B');
+    const response = await axios.get(url);
     const $ = cheerio.load(response.data);
-    const originalNumber = $('.pages-list-item').length;
-    console.log(`originalNumber: ${originalNumber}`);
-    return originalNumber;
+    const tagNumber = $('.pages-list-item').length;
+    console.log(`TagNumber: ${tagNumber}`);
+    return tagNumber;
   } catch (error) {
     console.error(error);
     return -1; // 返回一个错误标识值
   }
 };
 
-const apiHandler = async (_: VercelRequest, response: VercelResponse) => {
-  const originalNumber = await getPageTags();
-  response.status(200).json({
-    OriginalNumber: originalNumber,
-  });
-};
-
-// 搬运页面数量
-const getPageTags = async (): Promise<number> => {
-  try {
-    const response = await axios.get('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E6%90%AC%E8%BF%90');
-    const $ = cheerio.load(response.data);
-    const reprintedNumber = $('.pages-list-item').length;
-    console.log(`reprintedNumber: ${reprintedNumber}`);
-    return reprintedNumber;
-  } catch (error) {
-    console.error(error);
-    return -1; // 返回一个错误标识值
-  }
-};
-
-const apiHandler = async (_: VercelRequest, response: VercelResponse) => {
-  const reprintedNumber = await getPageTags();
-  response.status(200).json({
-    ReprintedNumber: reprintedNumber,
-  });
-};
-
-// 全部文章数量
-const getPageTags = async (): Promise<number> => {
-  try {
-    const response = await axios.get('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E6%96%87%E7%AB%A0');
-    const $ = cheerio.load(response.data);
-    const articlesNumber = $('.pages-list-item').length;
-    console.log(`ArticleNumber: ${articlesNumber}`);
-    return articlesNumber;
-  } catch (error) {
-    console.error(error);
-    return -1; // 返回一个错误标识值
-  }
-};
-
-const apiHandler = async (_: VercelRequest, response: VercelResponse) => {
-  const articlesNumber = await getPageTags();
-  response.status(200).json({
-    ArticleNumber: articlesNumber,
-  });
-};
-
-// 艺术作品数量
-const getPageTags = async (): Promise<number> => {
-  try {
-    const response = await axios.get('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E8%89%BA%E6%9C%AF%E4%BD%9C%E5%93%81');
-    const $ = cheerio.load(response.data);
-    const artNumber = $('.pages-list-item').length;
-    console.log(`ArtNumber: ${artNumber}`);
-    return artNumber;
-  } catch (error) {
-    console.error(error);
-    return -1; // 返回一个错误标识值
-  }
-};
-
-const apiHandler = async (_: VercelRequest, response: VercelResponse) => {
-  const artNumber = await getPageTags();
-  response.status(200).json({
-    ArtNumber: artNumber,
-  });
+const apiHandler = async (request: VercelRequest, response: VercelResponse, url: string, propertyName: string) => {
+  const tagNumber = await getPageTags(url);
+  const responseData = {
+    [propertyName]: tagNumber,
+  };
+  response.status(200).json(responseData);
 };
 
 const handlerWithRateLimit = rateLimit(apiHandler, 10, 60000); // 允许每分钟最多发出10个请求
 
-export default handlerWithRateLimit;
+export default async (request: VercelRequest, response: VercelResponse) => {
+  const originalNumberPromise = getPageTags('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E5%8E%9F%E5%88%9B');
+  const reprintedNumberPromise = getPageTags('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E6%90%AC%E8%BF%90');
+  const articlesNumberPromise = getPageTags('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E6%96%87%E7%AB%A0');
+  const artNumberPromise = getPageTags('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E8%89%BA%E6%9C%AF%E4%BD%9C%E5%93%81');
+
+  const originalNumber = await originalNumberPromise;
+  const reprintedNumber = await reprintedNumberPromise;
+  const articlesNumber = await articlesNumberPromise;
+  const artNumber = await artNumberPromise;
+
+  const responseData = {
+    OriginalNumber: originalNumber,
+    ReprintedNumber: reprintedNumber,
+    ArticlesNumber: articlesNumber,
+    ArtNumber: artNumber,
+  };
+
+  response.status(200).json(responseData);
+};
