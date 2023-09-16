@@ -11,10 +11,7 @@
     "url": "git+https://github.com/DeepForestClub/DFC-api.git"
   },
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/DeepForestClub/DFC-api/issues"
-  },
+  "license": "MIT",
   "homepage": "https://github.com/DeepForestClub/DFC-api",
   "dependencies": {
     "@vercel/node": "^2.9.10",
