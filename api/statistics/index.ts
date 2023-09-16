@@ -61,24 +61,26 @@ const rateLimit = (
   };
 };
 
-const getPageTags = async () => {
+const getPageTags = async (): Promise<number> => {
   try {
     const response = await axios.get('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E6%96%87%E7%AB%A0');
     const $ = cheerio.load(response.data);
-    const articlesNumber = $('#tagged-pages-list .pages-list-item').length;
-    console.log(`ArticlesNumber: ${articlesNumber}`);
+    const articlesNumber = $('.pages-list-item').length;
+    console.log(`ArticleNumber: ${articlesNumber}`);
+    return articlesNumber;
   } catch (error) {
     console.error(error);
+    return -1; // 返回一个错误标识值
   }
 };
 
-const apiHandler = async (request: VercelRequest, response: VercelResponse) => {
-  await getPageTags();
+const apiHandler = async (_: VercelRequest, response: VercelResponse) => {
+  const articlesNumber = await getPageTags();
   response.status(200).json({
-    message: 'Success',
+    ArticleNumber: articlesNumber,
   });
 };
 
-const handlerWithRateLimit = rateLimit(apiHandler, 10, 60000); // Allow up to 10 requests per minute
+const handlerWithRateLimit = rateLimit(apiHandler, 10, 60000); // 允许每分钟最多发出10个请求
 
 export default handlerWithRateLimit;
