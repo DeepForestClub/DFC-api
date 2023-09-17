@@ -2,6 +2,60 @@ import axios from 'axios';
 import cheerio from 'cheerio';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 
+const rateLimit = (
+    handler: (req: VercelRequest, res: VercelResponse) => void,
+    limit: number,
+    interval: number
+  ) => {
+    const requests = new Map<string, RequestRecord>();
+  
+    return async (request: VercelRequest, response: VercelResponse) => {
+      const ip =
+        request.headers['x-forwarded-for']?.split(',')[0].trim() ||
+        request.socket?.remoteAddress;
+  
+      if (!ip) {
+        return response.status(400).json({ message: 'Invalid Request' });
+      }
+  
+      const token = request.query.token || '';
+      const secretToken = process.env.SECRET_TOKEN;
+  
+      if (!secretToken && !token) {
+        return response.status(401).json({ message: 'Access Denied' });
+      }
+  
+      if (secretToken && token === secretToken) {
+        return handler(request, response);
+      }
+  
+      let record = requests.get(ip);
+  
+      if (!record) {
+        record = { count: 1, timeout: null };
+        requests.set(ip, record);
+      } else {
+        record.count++;
+      }
+  
+      if (record.count > limit) {
+        if (record.timeout) {
+          clearTimeout(record.timeout);
+        }
+  
+        return response.status(429).json({ message: 'Too Many Requests' });
+      }
+  
+      if (!record.timeout) {
+        record.timeout = setTimeout(() => {
+          requests.delete(ip);
+        }, interval);
+      }
+  
+      return handler(request, response);
+    };
+  };
+
 async function getPageLinks(url: string): Promise<string[]> {
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
