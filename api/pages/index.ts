@@ -2,6 +2,11 @@ import axios from 'axios';
 import cheerio from 'cheerio';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 
+interface RequestRecord {
+  count: number;
+  timeout: NodeJS.Timeout | null;
+}
+
 const rateLimit = (
   handler: (req: VercelRequest, res: VercelResponse) => void,
   limit: number,
@@ -56,24 +61,6 @@ const rateLimit = (
   };
 };
 
-async function getPageLinks(): Promise<string[]> {
-  const listAllPagesUrl = 'https://deep-forest-club.wikidot.com/system:list-all-pages';
-  const listAllPagesResponse = await axios.get(listAllPagesUrl);
-  const listAllPages$ = cheerio.load(listAllPagesResponse.data);
-  const pagerText = listAllPages$('.pager-no').html();
-  const totalPages = parseInt(pagerText?.split(' of ')[1] || '0', 10);
-
-  const allLinks: string[] = [];
-  for (let i = 1; i <= totalPages; i++) {
-    const pageUrl = `${listAllPagesUrl}/p/${i}`;
-    const linksOnPage = await getPageLinksFromUrl(pageUrl);
-    allLinks.push(...linksOnPage);
-  }
-
-  const uniqueLinks = [...new Set(allLinks)];
-  return uniqueLinks;
-}
-
 async function getPageLinksFromUrl(url: string): Promise<string[]> {
   const response = await axios.get(url);
   const $ = cheerio.load(response.data);
@@ -89,37 +76,54 @@ async function getPageLinksFromUrl(url: string): Promise<string[]> {
   return links;
 }
 
-async function getPageSource(page: string): Promise<string> {
-  // 发送 POST 请求，获取页面源代码
-  const endpoint = 'https://api.dfcwiki.eu.org/api/pages';
-  const url = `https://deep-forest-club.wikidot.com/${page}`;
-  const params = new URLSearchParams();
-  params.append('url', url);
-  params.append('action', 'get_by_url');
-  const response = await axios.post(endpoint, params);
+async function getPageSource(url: string): Promise<string> {
+  try {
+    const response = await axios.get(url, { timeout: 5000 });
+    const $ = cheerio.load(response.data);
+    const viewSourceEventScript = `
+      const event = new Event('click');
+      event.button = 0;
+      WIKIDOT.page.listeners.viewSourceClick(event);
+    `;
+    const pageSource = await new Promise<string>((resolve, reject) => {
+      $('body').append(`<script>${viewSourceEventScript}</script>`);
 
-  // 从源代码中提取出<div class="page-source">内部的内容，并将<br>转换为换行符
-  const $ = cheerio.load(response.data.page_html);
-  const pageSource = $('.page-source').html() || '';
-  const source = pageSource.replace(/<br>/g, '\n').trim();
-  return source;
+      setTimeout(() => {
+        const source = $('.page-source').html()?.replace(/\n/g, '<br>') || '';
+        if (source.trim() === '') {
+          reject(new Error('Failed to get page source'));
+        } else {
+          resolve(source.trim());
+        }
+      }, 2000);
+    });
+
+    return pageSource;
+  } catch (error) {
+    throw new Error(`Failed to fetch page source: ${error.message}`);
+  }
 }
 
-export default rateLimit(async (req: VercelRequest, res: VercelResponse) => {
-  try {
-    const page = req.query.page as string;
+export default rateLimit(
+  async (req: VercelRequest, res: VercelResponse) => {
+    try {
+      const page = req.query.page as string;
 
-    if (page) {
-      // 获取指定页面的源代码
-      const source = await getPageSource(page);
-      res.status(200).json({ page, PageSource: source });
-    } else {
-      // 获取所有页面的链接列表
-      const links = await getPageLinks();
-      res.status(200).json(links);
+      if (page) {
+        const url = `https://deep-forest-club.wikidot.com${page}`;
+        const source = await getPageSource(url);
+        res.status(200).json({ page, pageSource: source });
+      } else {
+        const links = await getPageLinksFromUrl(
+          'https://deep-forest-club.wikidot.com/'
+        );
+        res.status(200).json(links);
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal Server Error');
-  }
-}, 10, 1000);
+  },
+  10,
+  1000
+);
