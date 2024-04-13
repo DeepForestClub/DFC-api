@@ -1,6 +1,7 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
 import axios from 'axios';
 import cheerio from 'cheerio';
+import { VercelRequest, VercelResponse } from '@vercel/node';
+import { Analytics } from "@vercel/analytics/react";
 
 interface RequestRecord {
   count: number;
