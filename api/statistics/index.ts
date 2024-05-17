@@ -9,9 +9,7 @@ interface RequestRecord {
 }
 
 const rateLimit = (
-  handler: (req: VercelRequest, res: VercelResponse) => void,
-  limit: number,
-  interval: number
+  handler: (req: VercelRequest, res: VercelResponse) => Promise<void>
 ) => {
   const requests = new Map<string, RequestRecord>();
 
@@ -44,7 +42,7 @@ const rateLimit = (
       record.count++;
     }
 
-    if (record.count > limit) {
+    if (record.count > 10) {
       if (record.timeout) {
         clearTimeout(record.timeout);
       }
@@ -55,7 +53,7 @@ const rateLimit = (
     if (!record.timeout) {
       record.timeout = setTimeout(() => {
         requests.delete(ip);
-      }, interval);
+      }, 60000);
     }
 
     return handler(request, response);
@@ -81,7 +79,7 @@ const apiHandler = async (
   propertyName: string,
   tagSelector: string
 ) => {
-  const tagNumber = await getTagNumber(request.query.url as string, tagSelector)
+  const tagNumber = await getTagNumber(url, tagSelector)
   const responseData = {
     [propertyName]: tagNumber,
   }
@@ -89,11 +87,9 @@ const apiHandler = async (
 }
 
 const handlerWithRateLimit = rateLimit(
-  (req: VercelRequest, res: VercelResponse) => {
-    apiHandler(req, res, 'https://deep-forest-club.wikidot.com/system:page-tags-list', 'TagNumber', '.pages-tag-cloud-box > a.tag');
-  },
-  10,
-  60000
+  async (req: VercelRequest, res: VercelResponse) => {
+    apiHandler(req, res, req.query.url as string, 'TagNumber', '.pages-tag-cloud-box > a.tag');
+  }
 );
 
 export default async (request: VercelRequest, response: VercelResponse) => {
