@@ -81,12 +81,12 @@ const apiHandler = async (
   propertyName: string,
   tagSelector: string
 ) => {
-  const tagNumber = await getTagNumber(url, tagSelector);
+  const tagNumber = await getTagNumber(request.query.url as string, tagSelector)
   const responseData = {
     [propertyName]: tagNumber,
-  };
-  response.status(200).json(responseData);
-};
+  }
+  response.status(200).json(responseData)
+}
 
 const handlerWithRateLimit = rateLimit(
   (req: VercelRequest, res: VercelResponse) => {
