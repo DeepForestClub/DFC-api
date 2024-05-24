@@ -1575,7 +1575,7 @@ packages:
     version: 2.6.3
     dependencies:
       '@types/node': registry.npmmirror.com/@types/node@20.6.1
-      form-data: registry.npmmirror.com/form-data@3.0.1
+      form-data: 3.0.1
     dev: false
 
   registry.npmmirror.com/@types/node@14.18.33:
@@ -1726,7 +1726,6 @@ packages:
     name: asynckit
     version: 0.4.0
     dev: false
-
   registry.npmmirror.com/balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/balanced-match/-/balanced-match-1.0.2.tgz}
     name: balanced-match
@@ -2105,9 +2104,9 @@ packages:
     version: 4.0.0
     engines: {node: '>= 6'}
     dependencies:
-      asynckit: registry.npmmirror.com/asynckit@0.4.0
-      combined-stream: registry.npmmirror.com/combined-stream@1.0.8
-      mime-types: registry.npmmirror.com/mime-types@2.1.35
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      mime-types: 2.1.35
     dev: false
 
   registry.npmmirror.com/glob-parent@5.1.2:
