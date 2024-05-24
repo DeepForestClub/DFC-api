@@ -99,7 +99,7 @@ packages:
       npmlog: 5.0.1
       rimraf: 3.0.2
       semver: 7.5.4
-      tar: 6.2.1
+      tar: 6.2.0
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -1250,8 +1250,8 @@ packages:
       ansi-regex: 5.0.1
     dev: false
 
-  /tar@6.2.1:
-    resolution: {integrity: sha512-DZ4yORTwrbTj/7MZYq2w+/ZFdI6OZ/f9SFHR+71gIVUZhOQPHzVCLpvRnPgyaMpfWxxk/4ONva3GQSyNIKRv6A==}
+  /tar@6.2.0:
+    resolution: {integrity: sha512-/Wo7DcT0u5HUV486xg675HtjNd3BXZ6xDbzsCUZPt5iw8bTQ63bP0Raut3mvro9u+CUyq7YQd8Cx55fsZXxqLQ==}
     engines: {node: '>=10'}
     dependencies:
       chownr: 2.0.0
@@ -1535,7 +1535,7 @@ packages:
     dependencies:
       fast-glob: registry.npmmirror.com/fast-glob@3.3.1
       minimatch: registry.npmmirror.com/minimatch@3.1.2
-      mkdirp: 1.0.4
+      mkdirp: registry.npmmirror.com/mkdirp@1.0.4
       path-browserify: registry.npmmirror.com/path-browserify@1.0.1
     dev: false
 
@@ -2298,6 +2298,14 @@ packages:
     version: 3.1.2
     dependencies:
       brace-expansion: registry.npmmirror.com/brace-expansion@1.1.11
+    dev: false
+
+  registry.npmmirror.com/mkdirp@1.0.4:
+    resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/mkdirp/-/mkdirp-1.0.4.tgz}
+    name: mkdirp
+    version: 1.0.4
+    engines: {node: '>=10'}
+    hasBin: true
     dev: false
 
   registry.npmmirror.com/mri@1.2.0:
