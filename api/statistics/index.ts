@@ -99,7 +99,8 @@ export default async (request: VercelRequest, response: VercelResponse) => {
   const nonTopicArticlesNumberPromise = getTagNumber('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E9%9D%9E%E4%B8%BB%E9%A2%98%E6%96%87%E7%AB%A0', '.pages-list-item');
   const cooperationTopicArticlesNumberPromise = getTagNumber('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E5%90%88%E4%BD%9C%E4%B8%BB%E9%A2%98%E6%96%87%E7%AB%A0', '.pages-list-item');
   const cooperationNonTopicArticlesNumberPromise = getTagNumber('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E5%90%88%E4%BD%9C%E9%9D%9E%E4%B8%BB%E9%A2%98%E6%96%87%E7%AB%A0', '.pages-list-item');
-  const artNumberPromise = getTagNumber('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E8%89%BA%E6%9C%AF%E4%BD%9C%E5%93%81', '.pages-list-item');
+  const viveFrameworkNumberPromise = getTagNumber('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E5%90%88%E4%BD%9C%E9%9D%9E%E4%B8%BB%E9%A2%98%E6%96%87%E7%AB%A0', '.pages-list-item');
+  const artNumberPromise = getTagNumber('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E8%AE%BE%E5%AE%9A%E6%A1%86%E6%9E%B6', '.pages-list-item');
   const spaceNumberPromise = getTagNumber('https://deep-forest-club.wikidot.com/system:page-tags/tag/%E6%88%90%E5%91%98%E9%A1%B5', '.pages-list-item');
   const tagNumberPromise = getTagNumber('https://deep-forest-club.wikidot.com/system:page-tags-list', '.pages-tag-cloud-box > a.tag');
 
@@ -110,6 +111,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
   const nonTopicArticlesNumber = await nonTopicArticlesNumberPromise;
   const cooperationTopicArticlesNumber = await cooperationTopicArticlesNumberPromise;
   const cooperationNonTopicArticlesNumber = await cooperationNonTopicArticlesNumberPromise;
+  const viveFrameworkNumber = await viveFrameworkNumberPromise
   const artNumber = await artNumberPromise;
   const spaceNumber = await spaceNumberPromise;
   const tagNumber = await tagNumberPromise;
@@ -122,6 +124,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     NonTopicArticlesNumber: nonTopicArticlesNumber,
     CooperationTopicArticlesNumber: cooperationTopicArticlesNumber,
     CooperationNonTopicArticlesNumber: cooperationNonTopicArticlesNumber,
+    ViveFrameworkNumber: viveFrameworkNumber,
     ArtNumber: artNumber,
     SpaceNumber: spaceNumber,
     TagNumber: tagNumber,
