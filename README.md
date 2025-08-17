@@ -28,7 +28,7 @@ DFC-api的任何调用和使用都必须遵循以下规则和限制：
 针对各方面的接口调取均有不同的文档和调取介绍。大致方法如下。
 
 ```
-https://api.dfcwiki.eu.org/api/{NAME}
+https://api1.dfcwiki.eu.org/api/{NAME}
 ```
 
 部分接口可能存在参数值，按照相应的文档调取即可。
